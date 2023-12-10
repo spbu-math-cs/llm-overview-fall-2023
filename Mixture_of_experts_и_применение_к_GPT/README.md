@@ -77,12 +77,19 @@ $$
 
 Наш следующий шаг - провести эксперимент и оценить его результаты.
 
-Ниже можно ознакомиться с результатами:
+Ниже можно ознакомиться с результатами, а после них мы подведем итоги:
 
 ![Language modeling perplexity](/Mixture_of_experts_и_применение_к_GPT/3.2.png "Language modeling perplexity")
 
 ![Estimate of how much more efficient MoEs are relative to dense models in representative datasets](/Mixture_of_experts_и_применение_к_GPT/3.3.png "Estimate of how much more efficient MoEs are relative to dense models in representative datasets")
 
+<img src="/Mixture_of_experts_и_применение_к_GPT/3.4.png" alt="Zero-shot priming accuracy" width="50%"/>
+
+<img src="/Mixture_of_experts_и_применение_к_GPT/3.5.png" alt="Zero-shot priming accuracy averaged across 6 tasks as a function of compute cost" width="50%"/>
+
+![improvements](/Mixture_of_experts_и_применение_к_GPT/3.6.png "improvements")
+
+<img src="/Mixture_of_experts_и_применение_к_GPT/3.7.png" alt="Absolute accuracy improvement going from zero-shot to few-shot" width="50%"/>
 
 # Прикладное применение Mixture of Experts в реальной истории.
 Говоря о преимуществах и прочих аспектах, стоит также упомянуть и использование Mixture of Experts в вопросах из реального мира.
