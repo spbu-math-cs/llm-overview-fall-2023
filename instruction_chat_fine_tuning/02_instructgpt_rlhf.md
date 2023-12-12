@@ -144,7 +144,7 @@ Objective, который максимизирует агент, с учетом
 
 Далее -- оценка метрик (везде на графиках чем больше, тем лучше) на разных NLP задачах и соответствующих им бенчмарках, сначала случай zero-shot (когда моделям не объяснялось, что нужно выдать):
 
-![InstructGPT Zero Shot NLP benchmarks results](assets/instruct_gpt_zero_shot.png) 
+![InstructGPT Zero Shot NLP benchmarks results](assets/instruct_gpt_zero_shot.png)
 
 ... и когда моделям показали на нескольких примерах, что от них ожидается:
 
