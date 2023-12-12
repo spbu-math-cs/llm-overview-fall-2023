@@ -86,6 +86,8 @@ $$G_{k+1} = G_k + (\nabla f(x_k))^2,\ x_{k+1} = x_k - \frac{\alpha}{\sqrt{G_k + 
 
 ![adagrad vs gd](./assets/adagrad_vs_gd.gif "adagrad vs gd")
 
+Есть [статья](https://arxiv.org/pdf/1806.01811.pdf) про сходимость AdaGrad-Norm, в ней доказываются две теоремы, из которых можно сделать вывод, что алгоритм сходится со скоростью $O(\frac{1}{N})$ в детерминированной среде и со скоростью $O(\frac{log(N)}{\sqrt{N}})$ в стохастической среде.
+
 ### RMSProp
 
 Проблема AdaGrad, однако, заключается в том, что он работает невероятно медленно. Это связано с тем, что сумма квадратов градиента только увеличивается и никогда не уменьшается.
@@ -107,6 +109,14 @@ $$\ G_{k+1} = \gamma G_k + (1-\gamma)(\nabla f(x_k))^2$$
 $$x_{k+1} = x_k - \frac{\alpha}{\sqrt{G_{k+1} + \epsilon}} v_{k+1}$$
 
 ![training](./assets/training_cost_optimizers.webp)
+
+В изначальной [статье 2015 года](https://arxiv.org/pdf/1412.6980v8.pdf), представлявшей Adam, было приведено и доказательство сходимости, однако, оно было опровергнуто в [2018 году](https://arxiv.org/pdf/1904.09237.pdf). С тех пор многие статьи пытаются либо предложить возможные оптимизации Adam (например AMSGrad), либо предложить ограничения, которые гарантируют сходимость (например ADAMNC, который уже очень близок к AdaGrad).
+
+Касаемо скорости сходимости, например, [вот такой результат](https://www.researchgate.net/profile/Weizhong-Zhang-5/publication/329182126_A_Sufficient_Condition_for_Convergences_of_Adam_and_RMSProp/links/5d3af96b92851cd046888e6e/A-Sufficient-Condition-for-Convergences-of-Adam-and-RMSProp.pdf). Он применим и к RMSProp, так как можно увидеть, что Adam сводится к RMSProp при $\beta = 0$.
+![](./assets/adam_conv_1.png)
+![](./assets/adam_conv_2.png)
+
+Дальнейшие исследования сходимости Adam фокусируются на минимизации дисперсии, ориентируясь на SVRG (stochastic variance reduced gradien). О различных исследованиях сходимости и минимизации дисперсии у Adam можно почитать [тут](https://arxiv.org/pdf/2210.05607.pdf).
 
 [Классная тула](https://github.com/lilipads/gradient_descent_viz) для визуализации всяческих сходимостей.
 
