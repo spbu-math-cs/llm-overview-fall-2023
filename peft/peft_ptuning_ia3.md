@@ -7,7 +7,7 @@
   src="images/PT_ineffective_promts.png"
   width="300"
   alt="Пример нестабтльности промтинга">
-  <figcaption>Пример нестабтльности промтинга</figcaption>
+  <figcaption>#####Пример нестабтльности промтинга</figcaption>
 </figure>
                                                     
 Было несколько работ с попытками найти способ подбора наиболее эффективного промта[[1](https://arxiv.org/abs/2103.10385), [2](https://arxiv.org/abs/2010.15980), [3](https://arxiv.org/abs/2012.15723)].
