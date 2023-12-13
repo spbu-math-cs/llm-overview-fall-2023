@@ -86,7 +86,7 @@ $$G_{k+1} = G_k + (\nabla f(x_k))^2,\ x_{k+1} = x_k - \frac{\alpha}{\sqrt{G_k + 
 
 ![adagrad vs gd](./assets/adagrad_vs_gd.gif "adagrad vs gd")
 
-Есть [статья](https://arxiv.org/pdf/1806.01811.pdf) про сходимость AdaGrad-Norm, в ней доказываются две теоремы, из которых можно сделать вывод, что алгоритм сходится со скоростью $O(\frac{1}{N})$ в детерминированной среде и со скоростью $O(\frac{log(N)}{\sqrt{N}})$ в стохастической среде.
+Есть [статья](https://arxiv.org/pdf/1806.01811.pdf) про сходимость AdaGrad-Norm, в ней доказываются две теоремы, из которых можно сделать вывод, что алгоритм сходится со скоростью $O(\frac{1}{N})$ в детерминированной среде и со скоростью $O(\frac{log(N)}{\sqrt{N}})$ в стохастической среде (где $N$ - это количество итераций алгоритма).
 
 ### RMSProp
 
@@ -110,13 +110,15 @@ $$x_{k+1} = x_k - \frac{\alpha}{\sqrt{G_{k+1} + \epsilon}} v_{k+1}$$
 
 ![training](./assets/training_cost_optimizers.webp)
 
-В изначальной [статье 2015 года](https://arxiv.org/pdf/1412.6980v8.pdf), представлявшей Adam, было приведено и доказательство сходимости, однако, оно было опровергнуто в [2018 году](https://arxiv.org/pdf/1904.09237.pdf). С тех пор многие статьи пытаются либо предложить возможные оптимизации Adam (например AMSGrad), либо предложить ограничения, которые гарантируют сходимость (например ADAMNC, который уже очень близок к AdaGrad).
+В изначальной [статье 2015 года](https://arxiv.org/pdf/1412.6980v8.pdf), представлявшей Adam, было приведено и доказательство сходимости, однако, оно было опровергнуто в [2018 году](https://arxiv.org/pdf/1904.09237.pdf). С тех пор многие статьи пытаются либо предложить возможные оптимизации Adam (например [AMSGrad](https://arxiv.org/pdf/1904.09237.pdf#section.4)), либо предложить ограничения, которые гарантируют сходимость (например [ADAMNC](https://arxiv.org/pdf/1904.09237.pdf#subsection.5.1), который уже очень близок к AdaGrad).
 
-Касаемо скорости сходимости, например, [вот такой результат](https://www.researchgate.net/profile/Weizhong-Zhang-5/publication/329182126_A_Sufficient_Condition_for_Convergences_of_Adam_and_RMSProp/links/5d3af96b92851cd046888e6e/A-Sufficient-Condition-for-Convergences-of-Adam-and-RMSProp.pdf). Он применим и к RMSProp, так как можно увидеть, что Adam сводится к RMSProp при $\beta = 0$.
-![](./assets/adam_conv_1.png)
-![](./assets/adam_conv_2.png)
+Касаемо скорости сходимости, например, [вот такой результат](https://www.researchgate.net/profile/Weizhong-Zhang-5/publication/329182126_A_Sufficient_Condition_for_Convergences_of_Adam_and_RMSProp/links/5d3af96b92851cd046888e6e/A-Sufficient-Condition-for-Convergences-of-Adam-and-RMSProp.pdf). Он применим и к RMSProp, так как можно увидеть, что Adam сводится к RMSProp. При $\beta = 0$ мы забываем про метод инерции и $v_k$ просто дублирует градиент, получается уже формула RMSProp.
 
-Дальнейшие исследования сходимости Adam фокусируются на минимизации дисперсии, ориентируясь на SVRG (stochastic variance reduced gradien). О различных исследованиях сходимости и минимизации дисперсии у Adam можно почитать [тут](https://arxiv.org/pdf/2210.05607.pdf).
+![conv_1](./assets/adam_conv_1.png)
+
+![conv_2](./assets/adam_conv_2.png)
+
+Дальнейшие исследования сходимости Adam фокусируются на минимизации дисперсии, доказав что при сходящейся дисперсии сходится и Adam. Например, [одна из статей](https://arxiv.org/pdf/2210.05607.pdf) предалагает модификацю под названием VRAdam (Variance Reduced Adam) опираясь на построение SVRG (stochastic variance reduced gradient). Так же в этой статье рассказано о различных исследованиях сходимости Adam.
 
 [Классная тула](https://github.com/lilipads/gradient_descent_viz) для визуализации всяческих сходимостей.
 
