@@ -121,8 +121,8 @@ API, предоставляемый моделью/сервисом. Для ка
 
 ### Результаты
 
-![Alt text](assets/Studio_metrics.png)
+<img src="assets/Studio_metrics.png" width="600">
 
-![Alt text](assets/Stusio_metrics2.png)
+<img src="assets/Stusio_metrics2.png" width="600">
 
-![Alt text](assets/Studio_metrics3.png)
+<img src="assets/Studio_metrics3.png" width="600">
