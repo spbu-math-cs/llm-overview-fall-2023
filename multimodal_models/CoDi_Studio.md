@@ -123,6 +123,6 @@ API, предоставляемый моделью/сервисом. Для ка
 
 ![Alt text](assets/Studio_metrics.png)
 
-![Alt text](assets/Sudio_metrics2.png)
+![Alt text](assets/Studio_metrics2.png)
 
-![Alt text](assets/Sudio_metrics3.png)
+![Alt text](assets/Studio_metrics3.png)
