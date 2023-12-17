@@ -147,7 +147,7 @@ LoRA — вид адаптеров, предложенный в статье [Lo
 $$h = W x + \Delta W x = W x + B A x \text{, где}$$
 $W \in \mathbb{R}^{d \times d}$ — замороженная матрица весов модели,\
 $\Delta W \in \mathbb{R}^{d \times d}$ — модификация весов модели ранга $r \ll d$, которая обучается в LoRA-адаптере,\
-$A \in \mathbb{R}^{d \times r}$ и $B \in \mathbb{R}^{r \times d}$ — матрицы скелетного разложения матрицы-добавки $\Delta W$.
+$A \in \mathbb{R}^{r \times d}$ и $B \in \mathbb{R}^{d \times r}$ — матрицы скелетного разложения матрицы-добавки $\Delta W$.
 
 Схематически это выглядит так:
 
