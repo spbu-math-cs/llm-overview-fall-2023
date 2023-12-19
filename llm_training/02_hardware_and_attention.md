@@ -62,7 +62,7 @@ Flash-Attention (FA) можно воспринимать как минималь
 
 Исходя из этих соображений авторы написали реализацию одним кернелом, проходящим через весь Attention-слой разом, без необходимости "запоминать", а затем "вспоминать" большие промежуточные матрицы. Если абстрактно, то ценой небольшого увеличения [FLOPs](https://stackoverflow.com/questions/58498651/what-is-flops-in-field-of-deep-learning) можно перевзвешивать Values с помощью матрицы вероятностей P поступательно, не удерживая большие матрицы в памяти целиком. Алгоритм (не страшный) можно посмотреть в [статье](https://arxiv.org/pdf/2205.14135.pdf).
 
-На практике Flash-Attention можно использовать в большей части сценариев, он доступен для Attention-слоя начиная с PyTorch 2.0 (как [custom kernel](https://pytorch.org/blog/accelerated-pytorch-2/), имплементирован в DeepSpeed и Huggingface Accelerate. Более того, в документации PyTorch пишут: "Scaled dot product attention attempts to automatically select the most optimal implementation", поэтому можно пользоваться FA и в неведении. Однако FA поддерживается не для всех архитектур GPU, типов тензоров и масок attention. Но все быстро меняется.
+На практике Flash-Attention можно использовать в большей части сценариев, он доступен для Attention-слоя начиная с PyTorch 2.0 (как [custom kernel](https://pytorch.org/blog/accelerated-pytorch-2/)), имплементирован в DeepSpeed и Huggingface Accelerate. Более того, в документации PyTorch пишут: "Scaled dot product attention attempts to automatically select the most optimal implementation", поэтому можно пользоваться FA и в неведении. Однако FA поддерживается не для всех архитектур GPU, типов тензоров и масок attention. Но все быстро меняется.
 
 <img src="assets/FA_image.png" width="600">
 
