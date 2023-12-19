@@ -9,7 +9,7 @@ artificial intelligence_" - MACSR.
 
 #### Ilya Sutskever, OpenAI chief scientist
 В [недавнем интервью](https://www.nvidia.com/en-us/on-demand/session/gtcspring23-s52092/?ncid=so-yout-561702)
-Jensen Huang Илья рассказал про свое видение Multimodal направления развития ML. 
+Илья рассказал про свое видение Multimodal направления развития ML. 
 Две причины почему расширение LLM на другие модальности (в основном vision) кажется Илье интересным:
 
  - Humble: это просто полезно.
@@ -54,32 +54,38 @@ c диаграммами в условиях сильно лучше после 
 ### Состояние области в соответствии с недавним [обзором](https://arxiv.org/pdf/2309.10020.pdf)
 Иллюстрация текущего положения дел из [обзорной статьи](https://arxiv.org/pdf/2309.10020.pdf) 
 про Multimodal c упором на vision - параллель между прогрессом Textual и Multimodal моделей.
+Ниже перечислены основные модели по стадии развития - 
+pre-trained модели типа BERT для LLM (e.g. CLIP, понимающий что-то про соответствия между картинками и подписями к ним),
+затем более общеприменимые модели с emergent capabilities (то есть приспособленные к решению задач, на которые их не обучали прямо), 
+см. [Flamingo: a Visual Language Model for Few-Shot Learning](https://arxiv.org/abs/2204.14198). И, наконец, что-то вроде GPT-4, но мультимодальное.
+Скажем, GPT-4-Vision, не знаю, почему его тут нет. Авторы отделяют эту категорию от предыдущей по разрезу instruction-following и alignment.
 
 <img src='assets/models_compared.png' width='600'>
 
-Главные компоненты задачи, выделенные в той статье (опять же с фокусом на vision)
+Главные компоненты задачи (Q1-5), выделенные в той статье, в зависимости от шага в пайплайне (visual understanding, general-purpose interface посередине, и visual generation на выходе).
 
 <img src='assets/questions.png' width='600'>
 
-И классификация vision-ориентированных моделей по функции
+А также классификация существующих vision-ориентированных моделей по функции. Подробности дизайна конкретных архитектур и лосс функций можно посмотреть в статье.
 
 <img src='assets/paper_structure.png' width='600'>
 
-
 ### Central challenges
 
- - Data Collection and Labeling.
-For instance, gathering a balanced set of user posts that contain varied data types – 
-text, images, videos – is no small feat. Accurately labeling this data and making sure 
-modalities are aligned is also typically harder than Unimodal data processing.
- - Model Complexity.
-Multimodal learning models are inherently complex due to their need to process 
-and integrate multiple data types.
- - Data Fusion. 
-How and when to combine different modalities into one flow? Early fusion might cause loss of unique characteristics of individual modalities, 
-while late fusion might not capture the correlations between modalities adequately.
-Moreover, depending on the task you've got to find the right balance between the importance of 
-modalities - e.g.
-textual data (genres, tags), visual data (posters), and audio data (soundtracks, dialogue) 
-for the recommendation task.
+ - Сбор и разметка данных.
+К примеру, собрать сбалансированный датасет постов, содержащих составляющие из разных модальностей -
+тект, изображения, видео - непростая задача. Размечать такие данные сложнее, поскольку приходится работать с несколькими каналами информации.
+Кроме того, приходится решать проблемы с неточной согласованностью модальностей -
+картинка может соответствовать различным частям текста (например, относится к предыдущей странице документа), субтитры не всегда сходятся с аудиодорожками во времени.
+ - Сложность модели.
+Вследствие необходимости интегрировать разные типы данных мультимодальные модели имеют сложную структуру.
+ - Data Fusion.
+Как и в какой момент собирать разные модальности в один смешанный поток информации?
+Слишком ранний или поздний Fusion приводят к нечувствительности к особенностям отдельной модальности или нечувствительности к связям между ними.
+Более того, в зависимости от решаемой задачи приходится искать баланс важности между модальностями:
+например, для рекомендательной системы - между текстом (тэги, жанры), визуальной частью (постеры) и аудио (саундтреки, диалоги).
 
+### Stuff worth checking out 
+[QuilLLMan](https://modal.com/docs/examples/llm-voice-chat) -- Vicuna и Whisper, смерженные в один пайплайн, то есть голосовой LLM-бот.
+[Wav2Vec](https://arxiv.org/pdf/1904.05862.pdf) - как работают с аудио-модальностью? См. секцию Bimodal этой главы.
+[Universal Document Processing](https://arxiv.org/pdf/2212.02623.pdf) - дублирую прикольное мультимодальное SOTA решение для редактирования документов.
