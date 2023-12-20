@@ -190,7 +190,7 @@ $$
 | BERT $_{base}$ | 110M | 12 |
 | BERT $_{large}$ | 340M | 24 |
 | GPT1 | 117M | 12 |
-| [GPT2 $_{small}$](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) | 117M | 12 |
+| [GPT2](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) $_{small}$ | 117M | 12 |
 | GPT2 $_{base}$ | 345M | 24 | 
 | GPT2 $_{big}$ | 762M | 36 |
 | GPT2 $_{large}$ | 1542M | 48 |
