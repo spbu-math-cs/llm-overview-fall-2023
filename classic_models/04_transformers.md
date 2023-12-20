@@ -184,6 +184,18 @@ $$
 
 Соответственно pre-train этап GPT заключается в том, чтобы учить модель восстанавливать следующий токен.
 
+#### Размеры моделей
+| Model Name | Parameters | Layers |
+| ---------- | ---------- | ------ |
+| BERT $_{base}$ | 110M | 12 |
+| BERT $_{large}$ | 340M | 24 |
+| GPT1 | 117M | 12 |
+| [GPT2 $_{small}$](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) | 117M | 12 |
+| GPT2 $_{base}$ | 345M | 24 | 
+| GPT2 $_{big}$ | 762M | 36 |
+| GPT2 $_{large}$ | 1542M | 48 |
+| [GPT3](https://arxiv.org/pdf/2005.14165.pdf) | **175B** | 96 |
+
 
 
 P.S. Много картинок для визуализации трансформера взято из [этой замечательной статьи](http://jalammar.github.io/illustrated-transformer/).
