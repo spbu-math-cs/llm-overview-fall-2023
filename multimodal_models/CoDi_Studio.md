@@ -122,7 +122,10 @@ API, предоставляемый моделью/сервисом. Для ка
 ### Результаты
 
 <img src="assets/Studio_metrics.png" width="400">
+Video-to-text retrieval метрики
 
 <img src="assets/Stusio_metrics2.png" width="400">
+VQA метрики
 
 <img src="assets/Studio_metrics3.png" width="400">
+BLUE метрики
