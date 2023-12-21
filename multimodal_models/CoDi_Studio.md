@@ -129,3 +129,5 @@ VQA метрики
 
 <img src="assets/Studio_metrics3.png" width="400">
 BLUE метрики
+
+То есть i-Code Studio превосходит по метрикам многие SOTA-модели в этих трёх мультимодальных задачах.
