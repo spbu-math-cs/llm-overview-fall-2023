@@ -1,10 +1,10 @@
 # Распределенное обучение в коде (автор: Владислав Понизяйкин)
 
 Ранее мы разобрались, что такое:
-* single device
-* multi-device
-* multi-node
-* 
+* single device ― обучение на одной GPU
+* multi-device ― обучение на нескольких GPU, расположенных на одной ноде (машине)
+* multi-node ― обучение на нескольких GPU, расположенных на нескольких нодах (машинах)
+
 И даже поняли, как работает _DistributedDataParallel_.
 
 В этой главе мы посмотрим на практическое применение вышеупомянутых методов, а точнее посмотрим как оно реализуется в коде.
@@ -17,11 +17,18 @@
 
 На самом деле, реализуется он довольно просто. Достаточно указать:
 
-```
+```python
 # PyTorch
 device = torch.device("cuda:0")
 model.to(device)
 ```
+
+Для PyTorch-lightning:
+
+```python
+trainer = Trainer(..., accelerator="gpu", devices=1)
+```
+
 
 После этого, как правило, ваша модель начнет обучаться на GPU. В частных случаях придется аналогичным образом руками перекинуть данные на GPU, а также, возможно, указать `export CUDA_VISIBLE_DEVICES=1`, чтобы _PyTorch_ увидел _cuda_.
 
@@ -29,17 +36,18 @@ model.to(device)
 
 > Этот метод заключается в обучении модели на нескольких GPU, установленных на **одной** ноде. Под нодой мы понимаем машину с GPU, CPU и RAM.
 
-Как мы успели увидеть, зачастую возникают случаи, когда мы не можем обучиться на одной GPU - например, это слишком медленно, или нам не хватает видеопамяти одной GPU (хотя на самом деле, тут _DataParallel_ не поможет). Тут нам на помощь приходит **Data Parallel** - способ "раскидать" данные по нескольким GPU на одной тачке, чтобы обучаться на них параллельно.
+Как мы успели увидеть, зачастую возникают случаи, когда мы не можем обучиться на одной GPU ― например, это слишком медленно, или нам не хватает видеопамяти одной GPU (хотя на самом деле, тут _DataParallel_ не поможет). Тут нам на помощь приходит **Data Parallel** ― способ "раскидать" данные по нескольким GPU на одной тачке, чтобы обучаться на них параллельно.
 
-В PyTorch стандартное обучение на GPU - это обучение на одной GPU, поэтому придется немного подправить код. К счастью, делается это так же не сложно:
+В PyTorch стандартное обучение на GPU ― это обучение на одной GPU, поэтому придется немного подправить код. К счастью, делается это так же не сложно:
 
-```
+```python
 model = nn.DataParallel(model)
 ```
 
 Ниже можно увидеть более детальный код.
 <details><summary>Пример кода для DataParallel с 4 GPU</summary>
-<pre><code>
+
+```python
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
@@ -93,10 +101,11 @@ for data in rand_loader:
     output = model(input)
     print("Outside: input size", input.size(),
           "output_size", output.size())
-</code></pre>
+```
 </details>
 <details><summary>Пример вывода</summary>
-<pre><code>
+
+```bash
         In Model: input size torch.Size([8, 5]) output size torch.Size([8, 2])
         In Model: input size torch.Size([8, 5]) output size torch.Size([8, 2])
         In Model: input size torch.Size([8, 5]) output size torch.Size([8, 2])
@@ -117,26 +126,26 @@ Outside: input size torch.Size([30, 5]) output_size torch.Size([30, 2])
         In Model: input size torch.Size([3, 5]) output size torch.Size([3, 2])
         In Model: input size torch.Size([1, 5]) output size torch.Size([1, 2])
 Outside: input size torch.Size([10, 5]) output_size torch.Size([10, 2])
-</code>
-</pre></details>
+```
+</details>
 
 Таким образом, мы видим, что распараллелить данные на несколько GPU не так сложно.
 
-Но более интересный вопрос - а как распараллелить вычисления на несколько нод?
+Но более интересный вопрос ― а как распараллелить вычисления на несколько нод?
 
-## Multi machines
+## Multi-node
 
 > DistributedDataParallel (DDP) реализует параллелизм данных на модульном уровне, и может работать на нескольких машинах.
 
 Для начала разберемся, в чем разница между _DataParallel_ и _DistributedDataParallel_:
-* Для начала, _DataParallel_ - это одиночный процесс, который работает только на одной ноде. В то же время, _DistributedDataParallel_ может содержать несколько процессов и работать сразу на нескольких нодах.
-* Как мы упомянули в предыдущем пункте - _DataParallel_ не сможет помочь в случае, когда для обучения не хватает видеопамяти одной GPU. Дело в том, что для подобного необходимо пользоваться не _DataParallel_, а _ModelParallel_. И вот _DistributedDataParallel_ это умеет.
+* Для начала, _DataParallel_ ― это одиночный процесс, который работает только на одной ноде. В то же время, _DistributedDataParallel_ может содержать несколько процессов и работать сразу на нескольких нодах.
+* Как мы упомянули в предыдущем пункте ― _DataParallel_ не сможет помочь в случае, когда для обучения не хватает видеопамяти одной GPU. Дело в том, что для подобного необходимо пользоваться не _DataParallel_, а _ModelParallel_. И вот _DistributedDataParallel_ это умеет.
 
-Сама суть подхода такая: приложение, использующее DDP должно порождать несколько процессов, и создавать по одному экземпляру DDP для каждого процесса. Как правило, один процесс запускается на нескольких GPU на одной ноде. Допустим, они смогут обучаться с конкретным экземпляром DDP на разных нодах - но как синхронизировать эти вычисления? DDP делает так, что при вычислении градиента на _backward_ шаге он запускает этап "синхронизации градиентов" - агрегирует полученные градиенты и отправляет обновление во все экземпляры.
+Сама суть подхода такая: приложение, использующее DDP, должно порождать несколько процессов, и создавать по одному экземпляру DDP для каждого процесса. Как правило, один процесс запускается на нескольких GPU на одной ноде. Допустим, они смогут обучаться с конкретным экземпляром DDP на разных нодах ― но как синхронизировать эти вычисления? DDP делает так, что при вычислении градиента на _backward_ шаге он запускает этап "синхронизации градиентов" ― агрегирует полученные градиенты и отправляет обновление во все экземпляры.
 
-Как не странно, рекомендуемый подход - создавать ровно по одному процессу для каждой реплики модели. Это довольно удобно при вычисления градиента для конкретной реплики. Причем одна реплика может охватывать несколько GPU.
+Как не странно, рекомендуемый подход ― создавать ровно по одному процессу для каждой реплики модели. Это довольно удобно при вычисления градиента для конкретной реплики. Причем одна реплика может охватывать несколько GPU.
 
-Схематично, это выглядит так:
+Схематично это выглядит так:
 
 ![DDP schema](./assets/5.1.png)
 
@@ -144,69 +153,73 @@ Outside: input size torch.Size([10, 5]) output_size torch.Size([10, 2])
 
 ![DDP gradients](./assets/5.2.png)
 
-Процессы, в то же время, можно изобразить как тут:
+Процессы в то же время можно изобразить как тут:
 
 ![DDP processes](./assets/5.3.png)
 
-Тут каждый процесс запущен на двух GPU. Кстати говоря, можно увидеть _global rank_ и _local rank_ - это ровно то, о чем мы говорили в главе **Алгоритмы параллелизации в распределенных системах**.
+Тут каждый процесс запущен на двух GPU. Кстати говоря, можно увидеть _global rank_ и _local rank_ ― это ровно то, о чем мы говорили в главе [**Алгоритмы параллелизации в распределенных системах**](./03_distributed_parallelism.md), и что более формально опишем сейчас:
+
+* _global rank_ ― абсолютный порядковый номер GPU во всей совокупности машин. Для каждого _global rank_ может быть только одна GPU.
+* _local rank_ ― порядковый номер GPU на каждой ноде. Для каждого _local rank_ может быть несколько GPU ― по одной на каждой ноде.
 
 <details><summary>Пример кода</summary>
-<pre><code>
-  import os
-  import sys
-  import tempfile
-  import torch
-  import torch.distributed as dist
-  import torch.nn as nn
-  import torch.optim as optim
-  import torch.multiprocessing as mp
-    
-    from torch.nn.parallel import DistributedDataParallel as DDP
-    
-    def setup(rank, world_size):
-        os.environ['MASTER_ADDR'] = 'localhost'
-        os.environ['MASTER_PORT'] = '12355'
-        dist.init_process_group("gloo", rank=rank, world_size=world_size)
-    
-    def cleanup():
-        dist.destroy_process_group()
-    
-    class ToyModel(nn.Module):
-        def __init__(self):
-            super(ToyModel, self).__init__()
-            self.net1 = nn.Linear(10, 10)
-            self.relu = nn.ReLU()
-            self.net2 = nn.Linear(10, 5)
-            
-        def forward(self, x):
-            return self.net2(self.relu(self.net1(x)))
-    
-    
-    def demo_basic(rank, world_size):
-        print(f"Running basic DDP example on rank {rank}.")
-        setup(rank, world_size)
-    
-        model = ToyModel().to(rank)
-        ddp_model = DDP(model, device_ids=[rank])
-    
-        loss_fn = nn.MSELoss()
-        optimizer = optim.SGD(ddp_model.parameters(), lr=0.001)
-    
-        optimizer.zero_grad()
-        outputs = ddp_model(torch.randn(20, 10))
-        labels = torch.randn(20, 5).to(rank)
-        loss_fn(outputs, labels).backward()
-        optimizer.step()
-    
-        cleanup()
-    
-    
-    def run_demo(demo_fn, world_size):
-        mp.spawn(demo_fn,
-                 args=(world_size,),
-                 nprocs=world_size,
-                 join=True)
-</code></pre>
+
+```python
+import os
+import sys
+import tempfile
+import torch
+import torch.distributed as dist
+import torch.nn as nn
+import torch.optim as optim
+import torch.multiprocessing as mp
+
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+def setup(rank, world_size):
+    os.environ['MASTER_ADDR'] = 'localhost'
+    os.environ['MASTER_PORT'] = '12355'
+    dist.init_process_group("gloo", rank=rank, world_size=world_size)
+
+def cleanup():
+    dist.destroy_process_group()
+
+class ToyModel(nn.Module):
+    def __init__(self):
+        super(ToyModel, self).__init__()
+        self.net1 = nn.Linear(10, 10)
+        self.relu = nn.ReLU()
+        self.net2 = nn.Linear(10, 5)
+        
+    def forward(self, x):
+        return self.net2(self.relu(self.net1(x)))
+
+
+def demo_basic(rank, world_size):
+    print(f"Running basic DDP example on rank {rank}.")
+    setup(rank, world_size)
+
+    model = ToyModel().to(rank)
+    ddp_model = DDP(model, device_ids=[rank])
+
+    loss_fn = nn.MSELoss()
+    optimizer = optim.SGD(ddp_model.parameters(), lr=0.001)
+
+    optimizer.zero_grad()
+    outputs = ddp_model(torch.randn(20, 10))
+    labels = torch.randn(20, 5).to(rank)
+    loss_fn(outputs, labels).backward()
+    optimizer.step()
+
+    cleanup()
+
+
+def run_demo(demo_fn, world_size):
+    mp.spawn(demo_fn,
+             args=(world_size,),
+             nprocs=world_size,
+             join=True)
+```
 </details>
 
 ## Применение в библиотеках
@@ -215,7 +228,7 @@ Outside: input size torch.Size([10, 5]) output_size torch.Size([10, 2])
 
 ### Deepspeed
 
-Стратегия проста - при имеющемся:
+Стратегия проста ― при имеющемся:
 
 ```
 model_engine, optimize, _, _ = deepspeed.initialize(args=cmd_args, model=model, model_parameters=params
@@ -237,7 +250,7 @@ deepspeed.init_distributed()
 
 ### PyTorch Lightning
 
-Тут все даже интуитивнее - достаточно добавить `accelerator`, `devices` и `strategy` в `Trainer`:
+Тут все даже интуитивнее ― достаточно добавить `accelerator`, `devices` и `strategy` в `Trainer`:
 
 ```
 trainer = Trainer(..., accelerator="gpu", devices=8, strategy="ddp")
@@ -251,7 +264,7 @@ trainer = Trainer(..., accelerator="gpu", devices=8, strategy="ddp", num_nodes=4
 
 > Подход, позволяющий "разбить" модель на части, тем самым позволяя обучаться модели, которая не лезет на одну GPU (не хватает видеопамяти)
 
-Идея проста - у нас есть модель, состоящая из блоков/слоев. Зачем мы будем хранить модель на одной GPU, когда можно разделить ее и положить на несколько? Ниже приведем пример, как "поделить" _resnet50_:
+Идея проста ― у нас есть модель, состоящая из блоков/слоев. Зачем мы будем хранить модель на одной GPU, когда можно разделить ее и положить на несколько? Ниже приведем пример, как "поделить" _resnet50_:
 
 ```
 from torchvision.models.resnet import ResNet, Bottleneck
@@ -334,4 +347,4 @@ class ModelParallelResNet50(ResNet):
 
 ![ParallelResnet50 vs resnet50](./assets/5.4.png)
 
-Видим, что при распараллеливании модель отрабатывает на 7% дольше. Это доказывает, что сам метод не призван улучшить производительность - он только помогает выйти из ситуации критической нехватки ресурсов.
+Видим, что при распараллеливании модель отрабатывает на 7% дольше. Это доказывает, что сам метод не призван улучшить производительность ― он только помогает выйти из ситуации критической нехватки ресурсов.
