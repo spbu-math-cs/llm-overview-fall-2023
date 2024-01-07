@@ -28,7 +28,7 @@ export PYTHONPATH=$PWD &&  python sft.py
 
 ## Обучение DPO модели
 
-Обучение ведётся на оставшейся части уопмянутого ранее [датасета](https://huggingface.co/datasets/MoritzLaurer/multilingual-NLI-26lang-2mil7/viewer/default/ru_mnli). Была использовалась смесь русских текстов (из колонки "premise") и английских текстов (из колонки "premise original"), тексты ни на одном из языков не пересекаются с теми, что были использованы при обучении SFT модели.
+Обучение ведётся на оставшейся части упомянутого ранее [датасета](https://huggingface.co/datasets/MoritzLaurer/multilingual-NLI-26lang-2mil7/viewer/default/ru_mnli). Была использовалась смесь русских текстов (из колонки "premise") и английских текстов (из колонки "premise original"), тексты ни на одном из языков не пересекаются с теми, что были использованы при обучении SFT модели.
 
 Обучаются только $\text{IA}^{3}$-адаптеры, которые сохраняются в корне директории по пути "./dpo_checkpoint.pth"
 
