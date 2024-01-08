@@ -4,16 +4,12 @@ import torch
 from transformers import LlamaForCausalLM, LlamaTokenizerFast
 from transformers.generation import GenerationConfig
 
-from modify_generator_mixin import modify_mixin
-
 
 BATCH_SIZE = 16
 TEST_SIZE = 64
 MAX_LENGTH = 50
 EOS_TOKEN_ID = 29889    # replaced eos token because found weights did not generate original eos token often enough
 PAD_TOKEN_ID = 0
-
-# modify_mixin()
 
 # sample querying
 model = LlamaForCausalLM.from_pretrained(

@@ -5,8 +5,6 @@ from transformers import LlamaForCausalLM, LlamaTokenizerFast
 from transformers.generation import GenerationConfig
 from transformers.generation.stopping_criteria import StoppingCriteria, StoppingCriteriaList
 
-from modify_generator_mixin import modify_mixin
-
 
 class EOSCriteria(StoppingCriteria):
     def __init__(self, eos_token_id: int):
@@ -28,8 +26,6 @@ MAX_LENGTH = 50
 BOS_TOKEN_ID = 1
 EOS_TOKEN_ID = 29889    # replaced eos token because found weights did not generate original eos token often enough
 PAD_TOKEN_ID = 0
-
-# modify_mixin()
 
 model = LlamaForCausalLM.from_pretrained(
     'NousResearch/Llama-2-7b-hf',
